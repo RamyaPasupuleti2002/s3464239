@@ -20,12 +20,13 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -35,24 +36,41 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import uk.ac.tees.mad.decideeasy.R
-import uk.ac.tees.mad.decideeasy.ui.theme.DecideEasyTheme
+import uk.ac.tees.mad.decideeasy.utils.Constants
 
 @Composable
-fun AuthScreen() {
+fun AuthScreen(viewModel: AuthViewModel = hiltViewModel(),
+               navController: NavController
+) {
+    val isLoginSuccess by viewModel.isLoginSuccess.collectAsState()
     var name by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var selectedTab by remember { mutableIntStateOf(0) }
     var passwordVisible by remember { mutableStateOf(false) }
+    val context = LocalContext.current
+
+    LaunchedEffect(isLoginSuccess) {
+        if(isLoginSuccess){
+            navController.navigate(Constants.HOME_SCREEN){
+                popUpTo(Constants.AUTH_SCREEN){
+                    inclusive = true
+                }
+            }
+        }
+    }
+
     Column(modifier = Modifier.fillMaxSize()) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -162,7 +180,14 @@ fun AuthScreen() {
                         .fillMaxWidth()
                 )
                 Spacer(Modifier.weight(1f))
-                TextButton(onClick = {},
+                TextButton(onClick = {
+                    if (selectedTab==0){
+                        viewModel.loginUser(email,password,context)
+                    }
+                    else{
+                        viewModel.createUser(name,email, password, context)
+                    }
+                },
                     shape = RoundedCornerShape(8.dp),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color(0xFFc2e868)
@@ -180,13 +205,5 @@ fun AuthScreen() {
                 }
             }
         }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-private fun TabPrev() {
-    DecideEasyTheme {
-        AuthScreen()
     }
 }

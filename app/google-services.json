@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "2402446344",
+    "project_id": "decideeasy-872a7",
+    "storage_bucket": "decideeasy-872a7.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:2402446344:android:0afa8b2c7c518a324df5bd",
+        "android_client_info": {
+          "package_name": "uk.ac.tees.mad.decideeasy"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBAKu3w5k2fgaKe8NBVhwMWKIaDd8viGTo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
