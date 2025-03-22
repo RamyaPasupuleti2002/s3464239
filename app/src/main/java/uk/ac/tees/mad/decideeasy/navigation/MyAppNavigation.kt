@@ -22,7 +22,7 @@ fun MyAppNavigation() {
             AuthScreen(navController = navController)
         }
         composable(Constants.HOME_SCREEN) {
-            HomeScreen()
+            HomeScreen(navController)
         }
     }
 }
