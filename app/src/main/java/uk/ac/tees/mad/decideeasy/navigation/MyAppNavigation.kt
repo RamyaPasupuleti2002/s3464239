@@ -5,7 +5,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import uk.ac.tees.mad.decideeasy.ui.screen.auth.AuthScreen
+import uk.ac.tees.mad.decideeasy.ui.screen.custom.CustomScreen
 import uk.ac.tees.mad.decideeasy.ui.screen.home.HomeScreen
+import uk.ac.tees.mad.decideeasy.ui.screen.profile.ProfileScreen
 import uk.ac.tees.mad.decideeasy.ui.screen.splash.SplashScreen
 import uk.ac.tees.mad.decideeasy.utils.Constants
 
@@ -23,6 +25,14 @@ fun MyAppNavigation() {
         }
         composable(Constants.HOME_SCREEN) {
             HomeScreen(navController)
+        }
+
+        composable(Constants.CUSTOM_SCREEN) {
+            CustomScreen()
+        }
+
+        composable(Constants.PROFILE_SCREEN) {
+            ProfileScreen(navController)
         }
     }
 }

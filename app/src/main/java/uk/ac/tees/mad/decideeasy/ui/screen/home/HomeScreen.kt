@@ -2,6 +2,7 @@ package uk.ac.tees.mad.decideeasy.ui.screen.home
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -33,12 +34,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import uk.ac.tees.mad.decideeasy.R
+import uk.ac.tees.mad.decideeasy.utils.Constants
 
 @Composable
 fun HomeScreen(navController: NavController,
@@ -62,7 +65,10 @@ fun HomeScreen(navController: NavController,
                     modifier = Modifier
                         .size(50.dp)
                         .clip(CircleShape)
-                        .border(1.dp, color = Color.Gray, shape = CircleShape),
+                        .border(1.dp, color = Color.Gray, shape = CircleShape)
+                        .clickable {
+                            navController.navigate(Constants.PROFILE_SCREEN)
+                        },
                     contentScale = ContentScale.Crop,
                     placeholder = painterResource(id = R.drawable.placeholder_profile),
                     error = painterResource(id = R.drawable.placeholder_profile)
@@ -83,7 +89,7 @@ fun HomeScreen(navController: NavController,
             }
         },
         floatingActionButton = {
-            FloatingActionButton(onClick = {},
+            FloatingActionButton(onClick = {navController.navigate(Constants.CUSTOM_SCREEN)},
                 containerColor = Color(0xFFc2e868),
                 modifier = Modifier.padding(bottom = 30.dp, end = 12.dp)
                 ) {
