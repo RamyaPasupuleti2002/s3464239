@@ -26,13 +26,13 @@ fun InputDialog(
     if (showDialog) {
         AlertDialog(
             onDismissRequest = onDismiss,
-            title = { Text(text = "Enter Value") },
+            title = { Text(text = "Enter New Answer") },
             text = {
                 Column {
                     OutlinedTextField(
                         value = text,
                         onValueChange = { text = it },
-                        label = { Text("Input") }
+                        label = { Text("Answer") }
                     )
                 }
             },

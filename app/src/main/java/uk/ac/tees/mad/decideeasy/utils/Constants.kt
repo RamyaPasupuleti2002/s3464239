@@ -6,4 +6,7 @@ object Constants {
     const val HOME_SCREEN = "home_screen"
     const val CUSTOM_SCREEN = "custom_screen"
     const val PROFILE_SCREEN = "profile_screen"
+
+    const val USER = "User"
+    const val ANSWERS = "ANSWER"
 }

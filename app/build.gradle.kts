@@ -69,6 +69,8 @@ dependencies {
     // firebase auth
     implementation(platform("com.google.firebase:firebase-bom:33.10.0"))
     implementation("com.google.firebase:firebase-auth")
+    // fireStore
+    implementation("com.google.firebase:firebase-firestore")
 
     // coil for image loading
     implementation("io.coil-kt:coil-compose:2.5.0")

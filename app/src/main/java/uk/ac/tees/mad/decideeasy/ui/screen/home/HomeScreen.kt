@@ -48,7 +48,7 @@ fun HomeScreen(navController: NavController,
 ) {
     val isShaken by viewModel.isShaken.collectAsState(false)
     var listening by remember { mutableStateOf(false) }
-    val choices = listOf("Yes", "No", "Ok", "Do it", "Don't")
+    val answers by viewModel.answers.collectAsState()
     Scaffold(
         containerColor = Color(0xFFFBFBFB),
         topBar = {
@@ -112,7 +112,7 @@ fun HomeScreen(navController: NavController,
                 }
                 if (isShaken){
                     listening = false
-                    Text( choices.random(),
+                    Text( answers.random().answer,
                         fontSize = 26.sp,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.padding(bottom = 18.dp)

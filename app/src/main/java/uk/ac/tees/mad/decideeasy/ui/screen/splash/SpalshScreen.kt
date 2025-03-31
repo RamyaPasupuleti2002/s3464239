@@ -29,7 +29,7 @@ fun SplashScreen(navController: NavController) {
     val currentUser = FirebaseAuth.getInstance().currentUser
 
     LaunchedEffect(Unit) {
-        delay(3000)
+        delay(1500)
         navController.navigate(if (currentUser==null) Constants.AUTH_SCREEN else Constants.HOME_SCREEN){
             popUpTo(Constants.SPLASH_SCREEN){
                 inclusive = true
