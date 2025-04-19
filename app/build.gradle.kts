@@ -75,6 +75,9 @@ dependencies {
     // coil for image loading
     implementation("io.coil-kt:coil-compose:2.5.0")
 
+    // cloudinary
+    implementation("com.cloudinary:cloudinary-android:3.0.2")
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

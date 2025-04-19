@@ -182,10 +182,13 @@ fun ProfileScreen(viewModel: ProfileViewModel = hiltViewModel()) {
                             }
                             Row {
                                 Spacer(Modifier.weight(1f))
-                                TextButton({ expanded = false }) {
+                                TextButton({
+                                    expanded = false }) {
                                     Text("Cancel", color = Color.White)
                                 }
-                                TextButton({ expanded = false },modifier = Modifier.padding(start = 12.dp)) {
+                                TextButton({
+                                    viewModel.uploadImageToCloudinary(context)
+                                    expanded = false },modifier = Modifier.padding(start = 12.dp)) {
                                     Text("Save", color = Color(0xFF355F2E), fontWeight = FontWeight.Bold)
                                 }
                             }
@@ -205,17 +208,16 @@ fun ProfileScreen(viewModel: ProfileViewModel = hiltViewModel()) {
                     ) {
                     Text("Sign Out", color = Color(0xFF355F2E), fontSize = 20.sp)
                 }
-
-                imageUri?.let {
-                    Image(
-                        painter = rememberAsyncImagePainter(it),
-                        contentDescription = "Captured Image",
-                        modifier = Modifier
-                            .size(250.dp)
-                            .clip(RoundedCornerShape(8.dp))
-                            .border(2.dp, Color.Gray, RoundedCornerShape(8.dp))
-                    )
-                }
+//                imageUri?.let {
+//                    Image(
+//                        painter = rememberImagePainter(it),
+//                        contentDescription = "Captured Image",
+//                        modifier = Modifier
+//                            .size(250.dp)
+//                            .clip(RoundedCornerShape(8.dp))
+//                            .border(2.dp, Color.Gray, RoundedCornerShape(8.dp))
+//                    )
+//                }
             }
         }
     }

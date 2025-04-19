@@ -1,6 +1,7 @@
 package uk.ac.tees.mad.decideeasy.di
 
 import android.content.Context
+import com.cloudinary.Cloudinary
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
@@ -48,5 +49,17 @@ object AppModule {
     @Singleton
     fun provideRepository(dao:AnswerDao):Repository{
         return RepositoryImpl(dao)
+    }
+
+    @Provides
+    @Singleton
+    fun provideCloudinary(): Cloudinary {
+        val config = HashMap<String,String>().apply {
+            put("cloud_name", "dupw9isga")
+            put("api_key", "495645392631461")
+            put("api_secret", "j36p7CfjQA6BBMhfpTiHjYrUw88")
+        }
+
+        return Cloudinary(config)
     }
 }
