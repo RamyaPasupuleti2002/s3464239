@@ -1,12 +1,12 @@
 package uk.ac.tees.mad.decideeasy.ui.screen.profile
 
 import android.Manifest
+import android.net.Uri
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
@@ -46,16 +46,19 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import coil.compose.AsyncImage
-import coil.compose.rememberAsyncImagePainter
-import coil.compose.rememberImagePainter
 import uk.ac.tees.mad.decideeasy.R
+import uk.ac.tees.mad.decideeasy.utils.Constants
 
 @Composable
-fun ProfileScreen(viewModel: ProfileViewModel = hiltViewModel()) {
+fun ProfileScreen(navController: NavController,viewModel: ProfileViewModel = hiltViewModel()) {
     var expanded by remember { mutableStateOf(false) }
-    var name by remember { mutableStateOf("") }
+    var newName by remember { mutableStateOf("") }
+    var uri:Uri? = null
     val context = LocalContext.current
+    val name by viewModel.name.collectAsState()
+    val email by viewModel.email.collectAsState()
     val imageUri by viewModel.imageUri.collectAsState()
     val hasPermission by viewModel.hasCameraPermission.collectAsState()
 
@@ -73,6 +76,9 @@ fun ProfileScreen(viewModel: ProfileViewModel = hiltViewModel()) {
         contract = ActivityResultContracts.TakePicture(),
         onResult = { success ->
             if (success) {
+                uri?.let { viewModel.setImageUri(it)
+                    viewModel.onPicSelected(true)
+                }
                 Toast.makeText(context, "Picture Captured", Toast.LENGTH_SHORT).show()
             }
         }
@@ -133,14 +139,14 @@ fun ProfileScreen(viewModel: ProfileViewModel = hiltViewModel()) {
                         )
                         Column(modifier = Modifier.weight(1f)) {
                             Text(
-                                "My Name",
+                                name,
                                 fontSize = 22.sp,
                                 color = Color(0xFF355F2E),
                                 fontWeight = FontWeight.Bold,
                                 modifier = Modifier.padding(start = 8.dp)
                             )
                             Text(
-                                "Email",
+                                email,
                                 fontSize = 20.sp,
                                 color = Color(0xFF355F2E),
                                 modifier = Modifier.padding(start = 8.dp)
@@ -158,17 +164,17 @@ fun ProfileScreen(viewModel: ProfileViewModel = hiltViewModel()) {
                     AnimatedVisibility(expanded) {
                         Column {
                             OutlinedTextField(
-                                value = name,
-                                onValueChange = { newName -> name = newName },
+                                value = newName,
+                                onValueChange = { newName1 -> newName = newName1 },
                                 label = { Text("name") },
                                 modifier = Modifier.padding(top = 16.dp)
                                     .fillMaxWidth()
                             )
                             TextButton(onClick = {
                                 if (hasPermission) {
-                                    val uri = viewModel.generateTempUri()
-                                    viewModel.setImageUri(uri)
-                                    cameraLauncher.launch(uri)
+                                    uri = viewModel.generateTempUri()
+                                    //viewModel.setImageUri(uri)
+                                    cameraLauncher.launch(uri!!)
                                 } else {
                                     permissionLauncher.launch(Manifest.permission.CAMERA)
                                 }
@@ -183,11 +189,12 @@ fun ProfileScreen(viewModel: ProfileViewModel = hiltViewModel()) {
                             Row {
                                 Spacer(Modifier.weight(1f))
                                 TextButton({
+                                    viewModel.onPicSelected(false)
                                     expanded = false }) {
                                     Text("Cancel", color = Color.White)
                                 }
                                 TextButton({
-                                    viewModel.uploadImageToCloudinary(context)
+                                    viewModel.updateProfile(newName,context)
                                     expanded = false },modifier = Modifier.padding(start = 12.dp)) {
                                     Text("Save", color = Color(0xFF355F2E), fontWeight = FontWeight.Bold)
                                 }
@@ -196,7 +203,12 @@ fun ProfileScreen(viewModel: ProfileViewModel = hiltViewModel()) {
                     }
                 }
 
-                TextButton(onClick = {},
+                TextButton(onClick = {
+                    viewModel.signOut()
+                    navController.navigate(Constants.AUTH_SCREEN){
+                        popUpTo(0)
+                    }
+                },
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color(0xFFc2e868),
                     ),
@@ -208,16 +220,6 @@ fun ProfileScreen(viewModel: ProfileViewModel = hiltViewModel()) {
                     ) {
                     Text("Sign Out", color = Color(0xFF355F2E), fontSize = 20.sp)
                 }
-//                imageUri?.let {
-//                    Image(
-//                        painter = rememberImagePainter(it),
-//                        contentDescription = "Captured Image",
-//                        modifier = Modifier
-//                            .size(250.dp)
-//                            .clip(RoundedCornerShape(8.dp))
-//                            .border(2.dp, Color.Gray, RoundedCornerShape(8.dp))
-//                    )
-//                }
             }
         }
     }

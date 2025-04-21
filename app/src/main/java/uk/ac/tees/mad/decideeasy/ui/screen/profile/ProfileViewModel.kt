@@ -13,12 +13,12 @@ import androidx.lifecycle.viewModelScope
 import com.cloudinary.Cloudinary
 import com.cloudinary.utils.ObjectUtils
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.UserProfileChangeRequest
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import uk.ac.tees.mad.decideeasy.utils.Utils.getRealPathFromURI
 import java.io.File
 import javax.inject.Inject
 
@@ -31,10 +31,26 @@ class ProfileViewModel @Inject constructor(
     private val _imageUri = MutableStateFlow<Uri?>(null)
     val imageUri: StateFlow<Uri?> = _imageUri
 
+    private val _name = MutableStateFlow("Name")
+    val name:StateFlow<String> get() = _name
+
+    private val _email = MutableStateFlow("Email")
+    val email:StateFlow<String> get() = _email
+
     private val _hasCameraPermission = MutableStateFlow(false)
     val hasCameraPermission: StateFlow<Boolean> = _hasCameraPermission
+    private val _profilePicChange = MutableStateFlow(false)
 
     private val userId = auth.currentUser?.uid?:""
+
+    init {
+        viewModelScope.launch {
+            _name.value = auth.currentUser?.displayName.toString()
+            _imageUri.value = auth.currentUser?.photoUrl
+            _email.value = auth.currentUser?.email.toString()
+            Log.e("ImageUri",_imageUri.value?.path.toString())
+        }
+    }
 
     fun checkCameraPermission(context: Context) {
         _hasCameraPermission.value =
@@ -61,6 +77,11 @@ class ProfileViewModel @Inject constructor(
 
                     val imageUrl = request["secure_url"] as? String ?: ""
 
+                    val profileUpdate = UserProfileChangeRequest.Builder()
+                        .setPhotoUri(Uri.parse(imageUrl))
+                        .build()
+                    auth.currentUser?.updateProfile(profileUpdate)
+
                 } catch (e: Exception) {
                     Log.e("Upload error", e.message.toString())
                 }
@@ -68,7 +89,28 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
+    fun updateProfile(newName:String, context: Context){
+        _name.value = newName
+        viewModelScope.launch {
+            val profileUpdate = UserProfileChangeRequest.Builder()
+                .setDisplayName(_name.value)
+                .build()
+            auth.currentUser?.updateProfile(profileUpdate)
+            if (_profilePicChange.value){
+                uploadImageToCloudinary(context)
+            }
+        }
+    }
+
+    fun onPicSelected(value:Boolean){
+        _profilePicChange.value = value
+    }
+
     fun setImageUri(uri: Uri) {
         _imageUri.value = uri
+    }
+
+    fun signOut(){
+        auth.signOut()
     }
 }

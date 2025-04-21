@@ -32,7 +32,7 @@ fun MyAppNavigation() {
         }
 
         composable(Constants.PROFILE_SCREEN) {
-            ProfileScreen()
+            ProfileScreen(navController)
         }
     }
 }
