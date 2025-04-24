@@ -54,13 +54,13 @@ import uk.ac.tees.mad.decideeasy.utils.Constants
 @Composable
 fun ProfileScreen(navController: NavController,viewModel: ProfileViewModel = hiltViewModel()) {
     var expanded by remember { mutableStateOf(false) }
-    var newName by remember { mutableStateOf("") }
     var uri:Uri? = null
     val context = LocalContext.current
     val name by viewModel.name.collectAsState()
     val email by viewModel.email.collectAsState()
     val imageUri by viewModel.imageUri.collectAsState()
     val hasPermission by viewModel.hasCameraPermission.collectAsState()
+    var newName by remember { mutableStateOf(name) }
 
     val permissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission(),
