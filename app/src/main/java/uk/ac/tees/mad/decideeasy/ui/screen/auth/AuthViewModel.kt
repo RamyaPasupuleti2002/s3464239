@@ -17,9 +17,21 @@ class AuthViewModel @Inject constructor(
 
     private val _isLoginSuccess = MutableStateFlow(false)
     val isLoginSuccess:StateFlow<Boolean> get() = _isLoginSuccess
+    private val _isLoading = MutableStateFlow(false)
+    val isLoading:StateFlow<Boolean> get() = _isLoading
 
     fun loginUser(email:String, password:String, context: Context){
+        if (email.isEmpty()){
+            Toast.makeText(context, "Email should not be empty.", Toast.LENGTH_SHORT).show()
+            return
+        }
+        if (password.length<6){
+            Toast.makeText(context, "Password length must be at least six.", Toast.LENGTH_SHORT).show()
+            return
+        }
+        _isLoading.value = true
         auth.signInWithEmailAndPassword(email,password).addOnCompleteListener { task->
+            _isLoading.value = false
             if (task.isSuccessful){
                 _isLoginSuccess.value = true
                 Toast.makeText(context, "Login successful", Toast.LENGTH_SHORT).show()
@@ -31,7 +43,21 @@ class AuthViewModel @Inject constructor(
     }
 
     fun createUser(name:String, email: String, password: String, context: Context){
+        if (name.isEmpty()){
+            Toast.makeText(context, "Name should not be empty.", Toast.LENGTH_SHORT).show()
+            return
+        }
+        if (email.isEmpty()){
+            Toast.makeText(context, "Email should not be empty.", Toast.LENGTH_SHORT).show()
+            return
+        }
+        if (password.length<6){
+            Toast.makeText(context, "Password length must be at least six.", Toast.LENGTH_SHORT).show()
+            return
+        }
+        _isLoading.value = true
         auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener {task->
+            _isLoading.value = false
             if (task.isSuccessful){
                 val profileUpdate = UserProfileChangeRequest.Builder()
                     .setDisplayName(name)

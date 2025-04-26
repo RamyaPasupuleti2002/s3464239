@@ -49,6 +49,9 @@ fun HomeScreen(navController: NavController,
     val isShaken by viewModel.isShaken.collectAsState(false)
     var listening by remember { mutableStateOf(false) }
     val answers by viewModel.answers.collectAsState()
+    val randomAnswer by viewModel.randomAnswer.collectAsState()
+    val name by viewModel.name.collectAsState()
+    val imageUri by viewModel.imageUri.collectAsState()
     Scaffold(
         containerColor = Color(0xFFFBFBFB),
         topBar = {
@@ -59,7 +62,7 @@ fun HomeScreen(navController: NavController,
                     .padding(vertical = 36.dp, horizontal = 18.dp)
                 ) {
                 AsyncImage(
-                    model = "link",
+                    model = imageUri,
                     contentDescription = "Weather Image",
                     modifier = Modifier
                         .size(50.dp)
@@ -78,7 +81,7 @@ fun HomeScreen(navController: NavController,
                         color = Color(0xFF355F2E),
                         modifier = Modifier.padding(start = 8.dp)
                     )
-                    Text("My Name",
+                    Text(name,
                         fontSize = 22.sp,
                         color = Color(0xFF355F2E),
                         fontWeight = FontWeight.Bold,
@@ -102,43 +105,47 @@ fun HomeScreen(navController: NavController,
     ) { paddingValues ->
         Box(contentAlignment = Alignment.Center,
             modifier = Modifier.padding(paddingValues).fillMaxSize()){
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.fillMaxWidth()) {
-                if (listening && !isShaken){
-                    Text( "Shake to get",
-                        modifier = Modifier.padding(bottom = 18.dp)
-                        )
-                }
-                if (isShaken){
-                    listening = false
-                    Text( answers.random().answer,
-                        fontSize = 26.sp,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.padding(bottom = 18.dp)
-                        )
-                }
-                if(!listening || isShaken){
-                    TextButton(onClick = {
-                        viewModel.startListening()
-                        listening = true
-                    },
-                        shape = RoundedCornerShape(8.dp),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = Color(0xFFc2e868)
-                        ),
-                        modifier = Modifier
-                            .padding(horizontal = 22.dp)
-                            .fillMaxWidth()
-                    ) {
-                        Text(
-                            text = "Start",
-                            style = MaterialTheme.typography.titleLarge,
+            if (answers.isNotEmpty()) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.fillMaxWidth()) {
+                    if (listening && !isShaken){
+                        Text( "Shake to get",
+                            modifier = Modifier.padding(bottom = 18.dp)
+                            )
+                    }
+                    if (isShaken){
+                        listening = false
+                        Text( randomAnswer,
+                            fontSize = 26.sp,
                             fontWeight = FontWeight.Bold,
-                            color = Color.Black
-                        )
+                            modifier = Modifier.padding(bottom = 18.dp)
+                            )
+                    }
+                    if(!listening || isShaken){
+                        TextButton(onClick = {
+                            viewModel.startListening()
+                            listening = true
+                        },
+                            shape = RoundedCornerShape(8.dp),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color(0xFFc2e868)
+                            ),
+                            modifier = Modifier
+                                .padding(horizontal = 22.dp)
+                                .fillMaxWidth()
+                        ) {
+                            Text(
+                                text = "Start",
+                                style = MaterialTheme.typography.titleLarge,
+                                fontWeight = FontWeight.Bold,
+                                color = Color.Black
+                            )
+                        }
                     }
                 }
+            }else{
+                Text("Your answer list is empty.\nPlease add some answers!")
             }
         }
     }

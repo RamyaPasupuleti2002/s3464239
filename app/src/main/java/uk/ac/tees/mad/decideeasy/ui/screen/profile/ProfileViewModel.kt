@@ -48,7 +48,6 @@ class ProfileViewModel @Inject constructor(
             _name.value = auth.currentUser?.displayName.toString()
             _imageUri.value = auth.currentUser?.photoUrl
             _email.value = auth.currentUser?.email.toString()
-            Log.e("ImageUri",_imageUri.value?.path.toString())
         }
     }
 

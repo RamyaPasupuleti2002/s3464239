@@ -6,7 +6,11 @@ import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
+import android.net.Uri
+import android.os.VibrationEffect
+import android.os.Vibrator
 import android.util.Log
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuth
@@ -32,10 +36,19 @@ class HomeViewModel @Inject constructor(
         application.getSystemService(Context.SENSOR_SERVICE) as SensorManager
     private val shakeThreshold = 12f
 
+    private val _name = MutableStateFlow("Name")
+    val name:StateFlow<String> get() = _name
+
+    private val _imageUri = MutableStateFlow<Uri?>(null)
+    val imageUri: StateFlow<Uri?> = _imageUri
+
     private val userId = auth.currentUser?.uid ?:""
 
     private val _answers = MutableStateFlow(listOf<AnswerEntity>())
     val answers:StateFlow<List<AnswerEntity>> get() = _answers
+
+    private val _randomAnswer = MutableStateFlow("")
+    val randomAnswer:StateFlow<String> get() = _randomAnswer
 
     private val _isShaken = MutableStateFlow(false)
     val isShaken:StateFlow<Boolean> get() = _isShaken
@@ -52,6 +65,10 @@ class HomeViewModel @Inject constructor(
                     fetchFromFirebase()
                 }
             }
+        }
+        viewModelScope.launch {
+            _name.value = auth.currentUser?.displayName.toString()
+            _imageUri.value = auth.currentUser?.photoUrl
         }
     }
 
@@ -85,7 +102,7 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun stopListening() {
+    private fun stopListening() {
         if (isListening) {
             sensorManager.unregisterListener(this)
             isListening = false
@@ -98,7 +115,9 @@ class HomeViewModel @Inject constructor(
                 val (x,y,z) = it.values
                 val acceleration = sqrt(x*x + y*y + z*z) - SensorManager.GRAVITY_EARTH
                 if (acceleration>shakeThreshold){
+                    _randomAnswer.value = _answers.value.random().answer
                     _isShaken.value = true
+                    vibrateOnShake()
                     stopListening()
                 }
             }
@@ -112,7 +131,12 @@ class HomeViewModel @Inject constructor(
         stopListening()
     }
 
-    fun resetShakeEvent() {
+    private fun vibrateOnShake(){
+        val vibrator = ContextCompat.getSystemService(application.applicationContext,Vibrator::class.java)
+        vibrator?.vibrate(VibrationEffect.createOneShot(200,VibrationEffect.DEFAULT_AMPLITUDE))
+    }
+
+    private fun resetShakeEvent() {
         _isShaken.value = false
     }
 

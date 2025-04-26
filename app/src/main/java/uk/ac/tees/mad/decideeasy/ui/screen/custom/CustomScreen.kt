@@ -42,6 +42,7 @@ fun CustomScreen(
     var selectedEntity by remember { mutableStateOf<AnswerEntity?>(null) }
     val context = LocalContext.current
     Scaffold(
+        containerColor = Color(0xFFFBFBFB),
         topBar = {
             Box(
                 Modifier

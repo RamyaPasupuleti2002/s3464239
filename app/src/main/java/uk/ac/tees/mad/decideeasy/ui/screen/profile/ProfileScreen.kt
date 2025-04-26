@@ -28,6 +28,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -89,6 +90,7 @@ fun ProfileScreen(navController: NavController,viewModel: ProfileViewModel = hil
     }
 
     Scaffold(
+        containerColor = Color(0xFFFBFBFB),
         topBar = {
             Box(
                 Modifier
@@ -166,14 +168,23 @@ fun ProfileScreen(navController: NavController,viewModel: ProfileViewModel = hil
                             OutlinedTextField(
                                 value = newName,
                                 onValueChange = { newName1 -> newName = newName1 },
-                                label = { Text("name") },
+                                label = { Text("name", color = Color(0xFF355F2E)) },
+                                colors = TextFieldDefaults.colors(
+                                    focusedIndicatorColor = Color(0xFF355F2E),
+                                    unfocusedIndicatorColor = Color(0xFF355F2E),
+                                    focusedContainerColor = Color.Transparent,
+                                    unfocusedContainerColor = Color.Transparent,
+                                    unfocusedLabelColor = Color.Transparent,
+                                    focusedLabelColor = Color.Transparent,
+                                    unfocusedTextColor = Color(0xFF355F2E),
+                                    focusedTextColor = Color(0xFF355F2E)
+                                ),
                                 modifier = Modifier.padding(top = 16.dp)
                                     .fillMaxWidth()
                             )
                             TextButton(onClick = {
                                 if (hasPermission) {
                                     uri = viewModel.generateTempUri()
-                                    //viewModel.setImageUri(uri)
                                     cameraLauncher.launch(uri!!)
                                 } else {
                                     permissionLauncher.launch(Manifest.permission.CAMERA)
@@ -184,7 +195,7 @@ fun ProfileScreen(navController: NavController,viewModel: ProfileViewModel = hil
                                 modifier = Modifier.padding(top = 8.dp)
                                     .fillMaxWidth()
                                 ) {
-                                Text("Open Camera")
+                                Text("Open Camera", color = Color(0xFF355F2E))
                             }
                             Row {
                                 Spacer(Modifier.weight(1f))

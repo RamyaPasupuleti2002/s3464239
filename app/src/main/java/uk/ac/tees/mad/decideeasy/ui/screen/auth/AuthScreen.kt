@@ -17,6 +17,7 @@ import androidx.compose.material.icons.outlined.Email
 import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -54,6 +55,7 @@ fun AuthScreen(viewModel: AuthViewModel = hiltViewModel(),
                navController: NavController
 ) {
     val isLoginSuccess by viewModel.isLoginSuccess.collectAsState()
+    val isLoading by viewModel.isLoading.collectAsState()
     var name by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -75,9 +77,9 @@ fun AuthScreen(viewModel: AuthViewModel = hiltViewModel(),
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
-            .fillMaxWidth()
-            .background(color = Color.White)
-            .weight(1f)
+                .fillMaxWidth()
+                .background(color = Color.White)
+                .weight(1f)
         ){
             Spacer(Modifier.height(30.dp))
             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -127,7 +129,9 @@ fun AuthScreen(viewModel: AuthViewModel = hiltViewModel(),
                         colors = TextFieldDefaults.colors(focusedContainerColor = Color.White,
                             unfocusedContainerColor = Color.White,
                             focusedIndicatorColor = Color.White,
-                            unfocusedIndicatorColor = Color.White
+                            unfocusedIndicatorColor = Color.White,
+                            unfocusedTextColor = Color(0xFF355F2E),
+                            focusedTextColor = Color(0xFF355F2E)
                         ),
                         modifier = Modifier
                             .padding(horizontal = 16.dp, vertical = 12.dp)
@@ -142,11 +146,13 @@ fun AuthScreen(viewModel: AuthViewModel = hiltViewModel(),
                         contentDescription = "",
                         tint = Color.Black
                     ) },
-                    placeholder = { Text("Email") },
+                    placeholder = { Text("Email", color = Color(0xFF355F2E)) },
                     colors = TextFieldDefaults.colors(focusedContainerColor = Color.White,
                         unfocusedContainerColor = Color.White,
                         focusedIndicatorColor = Color.White,
-                        unfocusedIndicatorColor = Color.White
+                        unfocusedIndicatorColor = Color.White,
+                        unfocusedTextColor = Color(0xFF355F2E),
+                        focusedTextColor = Color(0xFF355F2E)
                     ),
                     modifier = Modifier
                         .padding(horizontal = 16.dp, vertical = 12.dp)
@@ -161,11 +167,13 @@ fun AuthScreen(viewModel: AuthViewModel = hiltViewModel(),
                         contentDescription = "",
                         tint = Color.Black
                     ) },
-                    placeholder = { Text("Password") },
+                    placeholder = { Text("Password", color = Color(0xFF355F2E)) },
                     colors = TextFieldDefaults.colors(focusedContainerColor = Color.White,
                         unfocusedContainerColor = Color.White,
                         focusedIndicatorColor = Color.White,
-                        unfocusedIndicatorColor = Color.White
+                        unfocusedIndicatorColor = Color.White,
+                        unfocusedTextColor = Color(0xFF355F2E),
+                        focusedTextColor = Color(0xFF355F2E)
                         ),
                     visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
                     trailingIcon = {
@@ -180,28 +188,42 @@ fun AuthScreen(viewModel: AuthViewModel = hiltViewModel(),
                         .fillMaxWidth()
                 )
                 Spacer(Modifier.weight(1f))
-                TextButton(onClick = {
-                    if (selectedTab==0){
-                        viewModel.loginUser(email,password,context)
+                if (!isLoading) {
+                    TextButton(onClick = {
+                        if (selectedTab==0){
+                            viewModel.loginUser(email,password,context)
+                        }
+                        else{
+                            viewModel.createUser(name,email, password, context)
+                        }
+                    },
+                        shape = RoundedCornerShape(8.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color(0xFFc2e868)
+                        ),
+                        modifier = Modifier
+                            .padding(horizontal = 16.dp, vertical = 30.dp)
+                            .fillMaxWidth()
+                        ) {
+                        Text(
+                            text = if (selectedTab==0) "Login" else "Sign Up",
+                            style = MaterialTheme.typography.titleLarge,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.Black
+                        )
                     }
-                    else{
-                        viewModel.createUser(name,email, password, context)
-                    }
-                },
-                    shape = RoundedCornerShape(8.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFFc2e868)
-                    ),
-                    modifier = Modifier
-                        .padding(horizontal = 16.dp, vertical = 30.dp)
+                }
+                else{
+                    Box(
+                        contentAlignment = Alignment.Center,
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 30.dp)
                         .fillMaxWidth()
                     ) {
-                    Text(
-                        text = if (selectedTab==0) "Login" else "Sign Up",
-                        style = MaterialTheme.typography.titleLarge,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.Black
-                    )
+                        CircularProgressIndicator(
+                            color = Color(0xFF355F2E),
+                            strokeWidth = 2.dp
+                        )
+                    }
                 }
             }
         }
